@@ -1,3 +1,9 @@
+<?php
+include_once "upload.php";
+include_once "db-conn.php";
+?>
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -13,6 +19,12 @@
   <body>
     <div class="container my-3 bg-light shadow">
         <h2 class="text-center text-info mb-3">Admin Dashboard</h2>
+        <?php if (!empty($statusMsg)) { ?>
+           <p class="alert alert-<?php echo $status; ?> alert-dismissible">
+           <?php echo $statusMsg; ?>
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </p> 
+       <?php } ?>
         <form method="post" enctype="multipart/form-data" class="pb-3">
             <div class="mb-3">
                 <label for="formFile" class="form-label">Upload a photo....</label>
@@ -20,6 +32,28 @@
             </div>
             <button class="btn btn-info text-white" name="upload-btn">Upload</button>
         </form>
+    </div>
+
+    <div class="container my-3">
+    <?php
+    // Include the database configuration file
+    include "db-conn.php";
+
+    // Get images from the database
+    $query = $conn->query("SELECT * FROM photo ORDER BY uploaded_at DESC");
+
+    if ($query->num_rows > 0) {
+      while ($row = $query->fetch_assoc()) {
+        $imageURL = "uploads/" . $row["name"]; ?>
+        <img src="<?php echo $imageURL; ?>" alt="" />
+        <?php
+      }
+    } else {
+       ?>
+            <p>No image(s) found...</p>
+        <?php
+    }
+    ?>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
